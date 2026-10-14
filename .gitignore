@@ -1,0 +1,1 @@
+printf ".venv/\nvenv/\n__pycache__/\n.env\n" >> .gitignore

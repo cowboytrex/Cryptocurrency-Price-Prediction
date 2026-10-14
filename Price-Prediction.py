@@ -7,18 +7,27 @@ import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Dropout
 
-# Generate synthetic cryptocurrency data
-dates = pd.date_range(start='2020-01-01', periods=1000, freq='D')
-np.random.seed(42)
-prices = np.cumsum(np.random.randn(1000)) + 100  # Random walk to simulate price
+# Download real Bitcoin historical prices
+import yfinance as yf
 
-synthetic_data = pd.DataFrame({'date': dates, 'close': prices})
-synthetic_data.to_csv('synthetic_cryptocurrency_data.csv', index=False)
+ticker = "BTC-USD"
 
-# Load the synthetic data
-data = pd.read_csv('synthetic_cryptocurrency_data.csv')
-data['date'] = pd.to_datetime(data['date'])
-data.set_index('date', inplace=True)
+data = yf.Ticker(ticker).history(
+    start="2020-01-01",
+    interval="1d"
+)
+
+if data.empty:
+    raise ValueError("No Bitcoin price data was downloaded.")
+
+# Keep closing prices
+data = data[["Close"]].rename(columns={"Close": "close"})
+
+# Save the updated dataset
+data.to_csv("bitcoin_prices_2020_2026.csv")
+
+print(f"Downloaded {len(data)} Bitcoin price records")
+print(data.tail())
 
 # Use only the 'close' price for prediction
 close_data = data['close'].values
