@@ -1,74 +1,70 @@
 # Cryptocurrency Price Prediction Using LSTM
 
-A Python-based machine learning project that uses a Long Short-Term Memory (LSTM) neural network to analyze historical cryptocurrency prices and predict price movements.
-
-The project uses TensorFlow and Keras for deep learning, Pandas and NumPy for data processing, Scikit-learn for preprocessing and evaluation, and Matplotlib for visualization.
+A Python-based deep learning project that explores cryptocurrency price forecasting using a Long Short-Term Memory (LSTM) neural network. The application processes historical market data, trains a time-series prediction model, evaluates prediction accuracy, and visualizes predicted versus actual cryptocurrency prices.
 
 ## Project Overview
 
-Cryptocurrency markets are highly volatile, making price forecasting a challenging time-series prediction problem.
+Cryptocurrency markets exhibit high volatility and complex price movements, making forecasting a challenging machine learning problem.
 
-This project explores whether an LSTM neural network can learn patterns from historical cryptocurrency prices and estimate subsequent closing prices.
+This project investigates the application of LSTM neural networks to historical cryptocurrency price data, with a focus on Bitcoin (BTC-USD).
 
-The original implementation uses synthetic price data. The updated workflow supports downloading real historical Bitcoin (BTC-USD) market data through Yahoo Finance.
+The project includes an original synthetic-data workflow and an updated historical Bitcoin dataset obtained through Yahoo Finance.
 
-### Features
+## Key Features
 
-- Download historical Bitcoin market data from Yahoo Finance.
-- Process and normalize historical closing prices.
-- Create time-series sequences for LSTM training.
-- Train a stacked LSTM neural network using TensorFlow/Keras.
-- Generate predictions for training and testing datasets.
-- Evaluate prediction accuracy using Root Mean Squared Error (RMSE).
-- Visualize actual prices against model predictions.
+- **Historical Data Collection:** Retrieve historical Bitcoin market data using the `yfinance` Python library.
+- **Data Preprocessing:** Clean, transform, and normalize cryptocurrency price datasets using Pandas, NumPy, and Scikit-learn.
+- **Time-Series Modeling:** Transform sequential price observations into sliding windows suitable for LSTM training.
+- **Deep Learning:** Implement a stacked LSTM neural network using TensorFlow and Keras.
+- **Model Evaluation:** Measure prediction accuracy using Root Mean Squared Error (RMSE).
+- **Data Visualization:** Compare predicted and actual cryptocurrency prices using Matplotlib.
+- **Experimental Analysis:** Explore model performance and limitations in cryptocurrency price forecasting.
 
 ## Technologies Used
 
-- **Python** — Core programming language
-- **TensorFlow / Keras** — LSTM neural network development
-- **Pandas** — Data manipulation
-- **NumPy** — Numerical computing
-- **Scikit-learn** — Data normalization and model evaluation
-- **Matplotlib** — Data visualization
-- **yfinance** — Historical cryptocurrency data retrieval
+| Technology | Purpose |
+|---|---|
+| Python | Core application development |
+| TensorFlow / Keras | Deep learning and LSTM architecture |
+| Pandas | Financial data processing |
+| NumPy | Numerical operations |
+| Scikit-learn | Feature scaling and model evaluation |
+| Matplotlib | Financial data visualization |
+| yfinance | Historical Bitcoin market data retrieval |
 
 ## Project Structure
 
 ```text
 Cryptocurrency-Price-Prediction/
 ├── Price-Prediction.py
-├── download_data.py
-├── bitcoin_historical_data.csv
 ├── synthetic_cryptocurrency_data.csv
+├── bitcoin_prices_2020_2026.csv
 ├── test_tensorflow.py
+├── .gitignore
 └── README.md
 ```
 
-**Note:** `download_data.py` and `bitcoin_historical_data.csv` are part of the updated data workflow. The CSV is generated when the download script runs. The main prediction script must be configured to read this real dataset; otherwise, the original implementation will continue generating synthetic prices.
+The repository includes both synthetic cryptocurrency data and historical Bitcoin market data. The prediction script must be configured to use the desired dataset.
 
 ## Installation
 
 ### 1. Clone the Repository
 
 ```bash
-git clone YOUR_REPOSITORY_URL
+git clone https://github.com/cowboytrex/Cryptocurrency-Price-Prediction.git
 cd Cryptocurrency-Price-Prediction
 ```
 
-Replace `YOUR_REPOSITORY_URL` with the actual GitHub repository URL.
-
 ### 2. Create a Virtual Environment
 
-Python 3.11 or 3.12 is recommended, subject to compatibility with the installed TensorFlow version.
-
-On macOS:
+For macOS:
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-On Windows:
+For Windows:
 
 ```powershell
 python -m venv .venv
@@ -79,105 +75,89 @@ python -m venv .venv
 
 ```bash
 python -m pip install --upgrade pip
-python -m pip install numpy pandas matplotlib scikit-learn tensorflow yfinance
+python -m pip install tensorflow pandas numpy scikit-learn matplotlib yfinance
 ```
 
-### 4. Verify Installation
+## Usage
 
-```bash
-python -c "import numpy, pandas, sklearn, matplotlib, tensorflow, yfinance; print('All dependencies installed successfully')"
-```
-
-## How to Run
-
-### Step 1 — Download Historical Bitcoin Data
-
-If you have added `download_data.py` using the updated download script:
-
-```bash
-python download_data.py
-```
-
-This downloads available daily Bitcoin market data beginning January 1, 2020, and saves it as:
-
-```text
-bitcoin_historical_data.csv
-```
-
-The dataset contains historical market information including opening, high, low, and closing prices, as well as trading volume where available.
-
-### Step 2 — Run the Prediction Model
+Run the cryptocurrency prediction script:
 
 ```bash
 python Price-Prediction.py
 ```
 
-**Important:** The original `Price-Prediction.py` generates and reads synthetic data. To train on real Bitcoin prices, first replace that synthetic-data section with code that loads `bitcoin_historical_data.csv` and selects the closing-price column.
+The application processes the dataset selected in the script, prepares time-series sequences, trains the LSTM model, and evaluates its predictions.
 
-### Step 3 — Review the Results
+**Note:** The historical Bitcoin CSV is included as a data source, but the prediction script must explicitly load that file to train on real market prices.
 
-The model trains on historical sequences and outputs training and testing RMSE values.
+## LSTM Model Architecture
 
-Example output format:
+The original model uses the following architecture:
 
-```text
-Train RMSE: ...
-Test RMSE: ...
-```
+| Layer | Configuration |
+|---|---|
+| LSTM Layer 1 | 50 units, return sequences enabled |
+| Dropout Layer 1 | 20% |
+| LSTM Layer 2 | 50 units |
+| Dropout Layer 2 | 20% |
+| Dense Layer | 25 units |
+| Output Layer | 1 unit |
 
-A Matplotlib chart displays actual closing prices alongside the model's training and testing predictions.
-
-The exact results vary depending on the dataset, training configuration, and model initialization.
-
-## Model Architecture
-
-The model uses a stacked LSTM architecture:
-
-1. LSTM layer with 50 units and sequence output
-2. Dropout layer with a rate of 0.2
-3. LSTM layer with 50 units
-4. Dropout layer with a rate of 0.2
-5. Dense layer with 25 units
-6. Dense output layer with 1 unit
-
-**Training configuration:**
+**Training configuration**
 
 - Optimizer: Adam
-- Loss function: Mean Squared Error
+- Loss function: Mean Squared Error (MSE)
 - Sequence length: 60 observations
-- Original train/test split: 80% / 20%
+- Training/testing split: 80% / 20%
+- Original training epochs: 1
 - Original batch size: 1
-- Original epochs: 1
 
-These settings are a starting point for experimentation rather than an optimized production model.
+These are experimental settings and have not been established as optimal.
 
 ## Model Evaluation
 
-Prediction performance is evaluated using Root Mean Squared Error (RMSE).
+The model uses Root Mean Squared Error (RMSE) to measure the difference between predicted and actual prices.
 
-Lower RMSE indicates that predicted prices are closer to actual prices on the evaluated dataset.
+RMSE is defined as:
 
-For reliable out-of-sample evaluation, preprocessing should be fitted using only training data, and test sequences should use historical context without incorporating future target values.
+\[
+RMSE = \sqrt{\frac{1}{n}\sum_{i=1}^{n}(y_i-\hat{y}_i)^2}
+\]
 
-## Limitations
+A lower RMSE indicates smaller prediction errors on the evaluated dataset.
 
-- Cryptocurrency prices are volatile and difficult to forecast.
-- Historical price patterns do not guarantee future performance.
-- The original model uses only closing prices.
-- The original preprocessing fits the scaler before splitting the dataset, which introduces data leakage.
-- A single training epoch may be insufficient for stable model performance.
-- The project is an educational machine-learning experiment, not a financial trading system.
+For a reliable assessment of forecasting performance, training and testing data should be separated chronologically, and preprocessing parameters should be fitted using only training data.
+
+## Data Sources
+
+**Yahoo Finance — Bitcoin (BTC-USD)**
+
+Historical Bitcoin market data is retrieved through the Python `yfinance` library.
+
+The historical dataset covers available observations from 2020 through 2026 and may include opening, closing, high, and low prices, as well as trading volume.
+
+The project also includes a synthetic cryptocurrency dataset for experimentation and initial model development.
+
+## Current Limitations
+
+- Cryptocurrency markets are highly volatile and difficult to forecast.
+- The original prediction workflow uses synthetic price data.
+- The original model uses closing prices rather than multiple market indicators.
+- The original preprocessing may introduce data leakage because scaling occurs before the training/testing split.
+- A single training epoch is insufficient to establish stable forecasting performance.
+- Historical predictive accuracy does not guarantee future performance.
 
 ## Future Improvements
 
-- Incorporate additional features such as trading volume and technical indicators.
-- Compare Bitcoin and Ethereum predictions.
-- Improve time-series validation and prevent data leakage.
-- Tune LSTM hyperparameters.
-- Compare LSTM performance with simpler baseline models.
-- Add prediction charts and evaluation results to the repository.
-- Automate dataset updates.
+- Integrate historical Bitcoin data directly into the model training pipeline.
+- Prevent data leakage through training-only normalization.
+- Add technical indicators such as RSI, MACD, and moving averages.
+- Implement walk-forward validation.
+- Compare LSTM performance against baseline forecasting methods.
+- Tune hyperparameters to improve model performance.
+- Expand forecasting experiments to Ethereum and other cryptocurrencies.
+- Add reproducible evaluation metrics and prediction charts.
 
 ## Disclaimer
 
-This project is intended for educational and research purposes only. It does not provide financial or investment advice.
+This project is intended for educational and research purposes only. It is not a production trading system and does not constitute financial or investment advice.
